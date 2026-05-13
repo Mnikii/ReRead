@@ -1,34 +1,32 @@
 from flask import Blueprint, jsonify, request, make_response, session
-from app import create_session
-from models import Books
+
+from ..extensions import db
+from ..models.book import Book
 
 books_bp = Blueprint('books', __name__)
 
 
 @books_bp.route('/books/<int:id>', methods=['GET'])
 def get_book(id):
-    db_sess = create_session()
-    book = db_sess.get(Books, id)
-    db_sess.close()
+    book = db.session.get(Book, id)
 
     if book is None:
         return jsonify({'error': 'Not found'}), 404
 
     return jsonify({
-        'id':          book.id,
-        'title':       book.title,
-        'author':      book.author,
-        'condition':   book.condition,
-        'owner_id':    book.owner_id,
+        'id': book.id,
+        'title': book.title,
+        'author': book.author,
+        'condition': book.condition,
+        'owner_id': book.owner_id,
         'location_id': book.location_id,
         'is_reserved': book.is_reserved,
     })
 
 
-
 @books_bp.route('/books', methods=['POST'])
 def create_book():
-    user_id = session.get('user_id') #  проверка что пользователь залогинен
+    user_id = session.get('user_id')  # проверка что пользователь залогинен
 
     if not request.json:
         return make_response(jsonify({'error': 'Empty request'}), 400)
@@ -40,37 +38,31 @@ def create_book():
     if not user_id:
         return make_response(jsonify({'error': 'Unauthorized'}), 401)
 
-    db_sess = create_session()
-    book = Books(
+    book = Book(
         title=request.json['title'],
         author=request.json['author'],
         condition=request.json['condition'],
         owner_id=user_id,
         location_id=request.json['location_id']
     )
-    db_sess.add(book)
-    db_sess.commit()
+    db.session.add(book)
+    db.session.commit()
     book_id = book.id
-    db_sess.close()
     return jsonify({'id': book_id})
 
 
 @books_bp.route('/books/<int:id>', methods=['DELETE'])
 def delete_book(id):
-    db_sess = create_session()
-    book = db_sess.get(Books, id)
+    book = db.session.get(Book, id)
 
     if book is None:
-        db_sess.close()
         return jsonify({'error': 'Not found'}), 404
 
     if book.owner_id != session.get('user_id'):
-        db_sess.close()
         return jsonify({'error': 'Forbidden'}), 403
 
-    db_sess.delete(book)
-    db_sess.commit()
-    db_sess.close()
+    db.session.delete(book)
+    db.session.commit()
     return jsonify({'success': 'OK'})
 
 
@@ -80,15 +72,13 @@ def my_books():
     if not user_id:
         return make_response(jsonify({'error': 'Unauthorized'}), 401)
 
-    db_sess = create_session()
-    books = db_sess.query(Books).filter(Books.owner_id == user_id).all()
-    db_sess.close()
+    books = Book.query.filter(Book.owner_id == user_id).all()
 
     return jsonify([{
-        'id':          book.id,
-        'title':       book.title,
-        'author':      book.author,
-        'condition':   book.condition,
+        'id': book.id,
+        'title': book.title,
+        'author': book.author,
+        'condition': book.condition,
         'location_id': book.location_id,
         'is_reserved': book.is_reserved,
     } for book in books])
