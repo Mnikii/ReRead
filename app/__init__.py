@@ -1,16 +1,7 @@
 import os
 from flask import Flask
-from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
-
-
-class DevelopmentConfig:
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///app.db")
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-
-db = SQLAlchemy()
-migrate = Migrate()
+from .config import DevelopmentConfig
+from .extensions import db, migrate
 
 
 def create_app(config_object=None):
