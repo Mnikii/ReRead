@@ -15,6 +15,14 @@ python run.py
 python -m app.scripts.seed_locations
 ```
 
+## Create migrations
+```bash
+export FLASK_APP=run.py
+flask db init
+flask db migrate -m "init tables"
+flask db upgrade
+```
+
 ## Environment variables
 - `SECRET_KEY` - Flask secret (defaults to `dev-secret`)
 - `DATABASE_URL` - override database URL
