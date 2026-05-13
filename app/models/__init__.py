@@ -1,4 +1,11 @@
-from .user import User
-from .book import Book
+try:
+    from .user import User
+except ModuleNotFoundError:
+    User = None
 
-__all__ = ['User', 'Book']
+from .books import Book
+
+__all__ = []
+if User is not None:
+    __all__.append('User')
+__all__.append('Book')
