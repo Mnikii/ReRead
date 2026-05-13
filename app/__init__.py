@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from flasgger import Swagger
 from .config import DevelopmentConfig
 from .extensions import db, migrate
 
@@ -16,6 +17,7 @@ def create_app(config_object=None):
     # init
     db.init_app(app)
     migrate.init_app(app, db)
+    Swagger(app)
 
     # register
     from .api import api_bp

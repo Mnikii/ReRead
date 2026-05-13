@@ -8,6 +8,30 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # {"email": "user@example.com", "password": "secret", "city": "Moscow"}
 @api_bp.route('/register', methods=['POST'])
 def register():
+    """
+    Register a new user.
+    ---
+    tags:
+      - auth
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          required: [email, password]
+          properties:
+            email:
+              type: string
+            password:
+              type: string
+            city:
+              type: string
+    responses:
+      201:
+        description: User created
+      400:
+        description: Validation error
+    """
     data = request.get_json() or {}
     email = data.get('email')
     password = data.get('password')
@@ -30,6 +54,28 @@ def register():
 # {"email": "user@example.com", "password": "secret"}
 @api_bp.route('/login', methods=['POST'])
 def login():
+    """
+    Log in a user.
+    ---
+    tags:
+      - auth
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          required: [email, password]
+          properties:
+            email:
+              type: string
+            password:
+              type: string
+    responses:
+      200:
+        description: Logged in
+      401:
+        description: Invalid credentials
+    """
     data = request.get_json() or {}
     email = data.get('email')
     password = data.get('password')
@@ -55,6 +101,17 @@ def get_current_user():
 # GET /api/me
 @api_bp.route('/me', methods=['GET'])
 def me():
+    """
+    Get current user profile.
+    ---
+    tags:
+      - auth
+    responses:
+      200:
+        description: Current user
+      401:
+        description: Unauthorized
+    """
     user = get_current_user()
     if not user:
         return jsonify({'error': 'unauthorized'}), 401

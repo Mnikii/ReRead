@@ -8,6 +8,22 @@ books_bp = Blueprint('books', __name__)
 
 @books_bp.route('/books/<int:id>', methods=['GET'])
 def get_book(id):
+    """
+    Get book by id.
+    ---
+    tags:
+      - books
+    parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Book details
+      404:
+        description: Not found
+    """
     book = db.session.get(Book, id)
 
     if book is None:
@@ -26,6 +42,34 @@ def get_book(id):
 
 @books_bp.route('/books', methods=['POST'])
 def create_book():
+    """
+    Create a new book.
+    ---
+    tags:
+      - books
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          required: [title, author, condition, location_id]
+          properties:
+            title:
+              type: string
+            author:
+              type: string
+            condition:
+              type: string
+            location_id:
+              type: integer
+    responses:
+      200:
+        description: Created
+      400:
+        description: Validation error
+      401:
+        description: Unauthorized
+    """
     user_id = session.get('user_id')  # проверка что пользователь залогинен
 
     if not request.json:
@@ -53,6 +97,24 @@ def create_book():
 
 @books_bp.route('/books/<int:id>', methods=['DELETE'])
 def delete_book(id):
+    """
+    Delete a book owned by the current user.
+    ---
+    tags:
+      - books
+    parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Deleted
+      403:
+        description: Forbidden
+      404:
+        description: Not found
+    """
     book = db.session.get(Book, id)
 
     if book is None:
@@ -68,6 +130,17 @@ def delete_book(id):
 
 @books_bp.route('/my-books', methods=['GET'])
 def my_books():
+    """
+    List books of the current user.
+    ---
+    tags:
+      - books
+    responses:
+      200:
+        description: List of books
+      401:
+        description: Unauthorized
+    """
     user_id = session.get('user_id')
     if not user_id:
         return make_response(jsonify({'error': 'Unauthorized'}), 401)

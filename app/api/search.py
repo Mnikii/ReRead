@@ -8,6 +8,25 @@ search_bp = Blueprint('search', __name__)
 # GET /books список всех книг с фильтрами
 @search_bp.route('/books', methods=['GET'])
 def get_books():
+    """
+    Search books by title, author, or city.
+    ---
+    tags:
+      - search
+    parameters:
+      - in: query
+        name: title
+        type: string
+      - in: query
+        name: author
+        type: string
+      - in: query
+        name: city
+        type: string
+    responses:
+      200:
+        description: List of books
+    """
     # Берём параметры из строки запроса
     # например /books?title=гарри&author=роулинг
     title = request.args.get('title')

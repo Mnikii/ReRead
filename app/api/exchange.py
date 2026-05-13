@@ -9,6 +9,24 @@ exchange_bp = Blueprint('exchange', __name__)
 # POST /books/<id>/request — забронировать книгу
 @exchange_bp.route('/books/<int:book_id>/request', methods=['POST'])
 def request_book(book_id):
+    """
+    Reserve a book by id.
+    ---
+    tags:
+      - exchange
+    parameters:
+      - in: path
+        name: book_id
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Reserved
+      400:
+        description: Already reserved
+      404:
+        description: Not found
+    """
     book = Book.query.get(book_id)
 
     # Если книга не найдена
@@ -29,6 +47,15 @@ def request_book(book_id):
 # GET /locations список всех точек обмена
 @exchange_bp.route('/locations', methods=['GET'])
 def get_locations():
+    """
+    List exchange locations.
+    ---
+    tags:
+      - exchange
+    responses:
+      200:
+        description: List of locations
+    """
     locations = Location.query.all()
 
     result = []
