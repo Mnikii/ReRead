@@ -3,7 +3,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'change-me'
+    SECRET_KEY = os.environ['SECRET_KEY']
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class DevelopmentConfig(Config):
