@@ -1,5 +1,8 @@
 from flask import Blueprint, jsonify
-from models import db, Book, Location
+
+from ..extensions import db
+from ..models.books import Book
+from ..models.location import Location
 
 exchange_bp = Blueprint('exchange', __name__)
 

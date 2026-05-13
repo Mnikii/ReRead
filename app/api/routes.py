@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, session
 from . import api_bp
 from ..extensions import db
 from ..models.user import User
@@ -41,11 +41,12 @@ def login():
     if not user or not check_password_hash(user.password_hash, password):
         return jsonify({'error': 'invalid credentials'}), 401
 
+    session['user_id'] = user.id
     return jsonify({'token': str(user.id), 'user': user.to_dict()}), 200
 
 
 def get_current_user():
-    uid = request.headers.get('X-User-Id')
+    uid = session.get('user_id')
     if not uid:
         return None
     return User.query.get(int(uid))

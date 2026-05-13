@@ -20,10 +20,14 @@ def create_app(config_object=None):
     # register
     from .api import api_bp
     from .api.books import books_bp
+    from .api.exchange import exchange_bp
+    from .api.search import search_bp
     from .main import main_bp
 
     app.register_blueprint(api_bp, url_prefix='/api')
     app.register_blueprint(books_bp, url_prefix='/api')
+    app.register_blueprint(exchange_bp, url_prefix='/api')
+    app.register_blueprint(search_bp, url_prefix='/api')
     app.register_blueprint(main_bp)
 
     return app
