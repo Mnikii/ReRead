@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, make_response, session
 
 from ..extensions import db
-from ..models.book import Book
+from ..models.books import Book
 
 books_bp = Blueprint('books', __name__)
 
