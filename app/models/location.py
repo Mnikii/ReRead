@@ -1,4 +1,8 @@
-from ..extensions import db
+try:
+    from ..extensions import db
+except ImportError:
+    from flask_sqlalchemy import SQLAlchemy
+    db = SQLAlchemy()
 
 
 class Location(db.Model):
